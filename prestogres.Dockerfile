@@ -77,8 +77,15 @@ RUN sed -i "s/vPROXY-SERVER/$PROXY_SERVER/g" /etc/redsocks.conf && \
 	sed -i "s/vPROXY-PORT/$PROXY_PORT/g" /etc/redsocks.conf && \
 	/etc/init.d/redsocks restart
 
+COPY prestogres.conf /usr/local/etc/prestogres.conf
+
 RUN sed -i "s/vPRESTO-SERVER/$PRESTO_SERVER/g" /usr/local/etc/prestogres.conf && \
-	sed -i "s/vPRESTO-PORT/$PRESTO_PORT/g" /usr/local/etc/prestogres.conf
+	sed -i "s/vPRESTO-CATALOG/$PRESTO_CATALOG/g" /usr/local/etc/prestogres.conf
+
+COPY prestogres_hba.conf /usr/local/etc/prestogres_hba.conf
+
+RUN sed -i "s/vPRESTO-SERVER/$PRESTO_SERVER/g" /usr/local/etc/prestogres_hba.conf && \
+	sed -i "s/vPRESTO-CATALOG/$PRESTO_CATALOG/g" /usr/local/etc/prestogres_hba.conf
 
 COPY prestogres_start.sh /prestogres_start.sh
 

@@ -15,11 +15,6 @@ services:
         - PRESTOGRES_VERSION=0.6.7
         - PROXY_PORT=5679
         - PROXY_SERVER=host.docker.internal
-    volumes:
-      - ./prestogres.conf:/usr/local/etc/prestogres.conf
-      - ./prestogres_hba.conf:/usr/local/etc/prestogres_hba.conf
-      - /Users/tom/.ssh/tomhewitt.pem:/root/.ssh/tomhewitt.pem
-      - /Users/tom/.ssh/id_rsa:/root/.ssh/id_rsa
 
     cap_add:
       - NET_ADMIN
