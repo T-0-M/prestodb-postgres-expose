@@ -1,10 +1,18 @@
 FROM ubuntu:16.04
 
-ENV PRESTOGRES_VERSION=0.6.7
-ENV PGDATA=/var/lib/postgresql/data
-# ENV PROXY_SERVER=host.docker.internal
-ENV PROXY_SERVER=localhost
-ENV PROXY_PORT=5679
+ARG PGDATA
+ARG PRESTO_CATALOG
+ARG PRESTO_SERVER
+ARG PRESTOGRES_VERSION
+ARG PROXY_PORT
+ARG PROXY_SERVER
+
+ENV PGDATA $PGDATA
+ENV PRESTO_CATALOG $PRESTO_CATALOG
+ENV PRESTO_SERVER $PRESTO_SERVER
+ENV PRESTOGRES_VERSION $PRESTOGRES_VERSION
+ENV PROXY_PORT $PROXY_PORT
+ENV PROXY_SERVER $PROXY_SERVER
 
 # Add the PostgreSQL PGP key to verify their Debian packages.
 # It should be the same key as https://www.postgresql.org/media/keys/ACCC4CF8.asc
@@ -56,6 +64,9 @@ RUN /etc/init.d/postgresql start && \
     psql --command "CREATE USER docker WITH SUPERUSER PASSWORD 'docker';" && \
     createdb -O docker docker
 
+RUN echo ${PGDATA}
+RUN echo $PGDATA
+
 RUN prestogres-ctl create ${PGDATA}
 
 USER root
@@ -65,6 +76,9 @@ COPY redsocks.conf /etc/redsocks.conf
 RUN sed -i "s/vPROXY-SERVER/$PROXY_SERVER/g" /etc/redsocks.conf && \
 	sed -i "s/vPROXY-PORT/$PROXY_PORT/g" /etc/redsocks.conf && \
 	/etc/init.d/redsocks restart
+
+RUN sed -i "s/vPRESTO-SERVER/$PRESTO_SERVER/g" /usr/local/etc/prestogres.conf && \
+	sed -i "s/vPRESTO-PORT/$PRESTO_PORT/g" /usr/local/etc/prestogres.conf
 
 COPY prestogres_start.sh /prestogres_start.sh
 
